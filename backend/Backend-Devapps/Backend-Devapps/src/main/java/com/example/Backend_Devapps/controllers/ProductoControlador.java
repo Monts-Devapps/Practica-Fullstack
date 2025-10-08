@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map; // <-- ASEGÚRATE DE AGREGAR ESTA IMPORTACIÓN
 import java.util.Optional;
 
 @RestController
@@ -16,13 +17,13 @@ public class ProductoControlador {
     @Autowired
     private ProductoServicio productoServicio;
 
-    // Endpoint para obtener todos los productos (GET /productos)
+    // Endpoint para obtener los productos
     @GetMapping
     public List<Producto> obtenerTodos() {
         return productoServicio.obtenerTodos();
     }
 
-    // Endpoint para obtener un producto por ID (GET /productos/{id})
+    // Endpoint para obtener id
     @GetMapping("/{id}")
     public ResponseEntity<Producto> obtenerPorId(@PathVariable Long id) {
         Optional<Producto> producto = productoServicio.obtenerPorId(id);
@@ -30,13 +31,13 @@ public class ProductoControlador {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Endpoint para crear un nuevo producto (POST /productos)
+    // Endpoint para crear productos
     @PostMapping
     public Producto crear(@RequestBody Producto producto) {
         return productoServicio.crear(producto);
     }
 
-    // Endpoint para actualizar un producto (PUT /productos/{id})
+    // Endpoint para actualizar un producto
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizar(@PathVariable Long id, @RequestBody Producto producto) {
         try {
@@ -47,10 +48,38 @@ public class ProductoControlador {
         }
     }
 
-    // Endpoint para eliminar un producto (DELETE /productos/{id})
+    // Endpoint para eliminar un producto
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         productoServicio.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<Producto> cambiarEstadoActivo(@PathVariable Long id) {
+        try {
+            Producto producto = productoServicio.cambiarEstadoActivo(id);
+            return ResponseEntity.ok(producto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{id}/ajustar")
+    public ResponseEntity<Producto> ajustarExistencias(@PathVariable Long id, @RequestBody Map<String, Integer> body) {
+        try {
+            Integer cantidad = body.get("cantidad");
+            if (cantidad == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            Producto producto = productoServicio.ajustarExistencias(id, cantidad);
+            return ResponseEntity.ok(producto);
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest().build();
+        } catch (RuntimeException e) {
+
+            return ResponseEntity.notFound().build();
+        }
     }
 }

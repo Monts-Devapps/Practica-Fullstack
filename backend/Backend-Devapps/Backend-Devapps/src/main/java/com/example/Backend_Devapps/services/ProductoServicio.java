@@ -1,7 +1,7 @@
 package com.example.Backend_Devapps.services;
 
 import com.example.Backend_Devapps.entity.Producto;
-import com.example.Backend_Devapps.repositories.ProductosRepo; // <-- Cambio aquí
+import com.example.Backend_Devapps.repositories.ProductosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Optional;
 public class ProductoServicio {
 
     @Autowired
-    private ProductosRepo productosRepo; // <-- Y aquí
+    private ProductosRepo productosRepo;
 
     public List<Producto> obtenerTodos() {
         return productosRepo.findAll();
@@ -48,5 +48,29 @@ public class ProductoServicio {
 
     public void eliminar(Long id) {
         productosRepo.deleteById(id);
+    }
+
+
+
+
+    public Producto cambiarEstadoActivo(Long id) {
+        return productosRepo.findById(id)
+                .map(producto -> {
+                    producto.setActivo(!producto.isActivo()); // Invierte el valor booleano
+                    return productosRepo.save(producto);
+                }).orElseThrow(() -> new RuntimeException("Producto no encontrado con el id " + id));
+    }
+
+
+    public Producto ajustarExistencias(Long id, int cantidad) {
+        return productosRepo.findById(id)
+                .map(producto -> {
+                    int nuevasExistencias = producto.getExistencias() + cantidad;
+                    if (nuevasExistencias < 0) {
+                        throw new IllegalArgumentException("El ajuste no puede resultar en existencias negativas.");
+                    }
+                    producto.setExistencias(nuevasExistencias);
+                    return productosRepo.save(producto);
+                }).orElseThrow(() -> new RuntimeException("Producto no encontrado con el id " + id));
     }
 }
