@@ -56,7 +56,7 @@ public class ProductoServicio {
     public Producto cambiarEstadoActivo(Long id) {
         return productosRepo.findById(id)
                 .map(producto -> {
-                    producto.setActivo(!producto.isActivo()); // Invierte el valor booleano
+                    producto.setActivo(!producto.isActivo());
                     return productosRepo.save(producto);
                 }).orElseThrow(() -> new RuntimeException("Producto no encontrado con el id " + id));
     }
