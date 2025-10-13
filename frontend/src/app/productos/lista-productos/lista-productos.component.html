@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="header">
+    <h1>Lista de Productos</h1>
+    <button class="btn btn-primary" [routerLink]="['/productos/nuevo']">Nuevo Producto</button>
+  </div>
+
+  <div *ngIf="cargando">Cargando...</div>
+
+  <table *ngIf="!cargando">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Categoría</th>
+        <th>Precio</th>
+        <th>Existencias</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let producto of productos">
+        <td>{{ producto.nombre }}</td>
+        <td>{{ producto.marca }}</td>
+        <td>{{ producto.categoria }}</td>
+        <td>{{ producto.precio | currency }}</td>
+        <td>{{ producto.existencias }}</td>
+        <td>
+          <label class="switch">
+            <input type="checkbox" [checked]="producto.activo" (change)="toggleActivo(producto)">
+            <span class="slider round"></span>
+          </label>
+        </td>
+        <td class="acciones">
+          <button class="btn btn-info" [routerLink]="['/productos/editar', producto.id]">Editar</button>
+          <button class="btn btn-danger" (click)="eliminar(producto.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
