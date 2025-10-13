@@ -6,7 +6,7 @@
 
   <div *ngIf="cargando">Cargando...</div>
 
-  <table *ngIf="!cargando">
+  <table *ngIf="!cargando && productos.length > 0">
     <thead>
       <tr>
         <th>Nombre</th>
@@ -38,4 +38,13 @@
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="!cargando && productos.length === 0">
+    <p>No hay productos para mostrar.</p>
+  </div>
+
+  <div class="paginacion-container">
+  <button (click)="paginaAnterior()" [disabled]="paginaActual === 0">&laquo; Anterior</button>
+  <span>Página {{ paginaActual + 1 }} de {{ totalPaginas }}</span>
+  <button (click)="paginaSiguiente()" [disabled]="paginaActual >= totalPaginas - 1">Siguiente &raquo;</button>
 </div>

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ProductoServicio {
@@ -13,9 +15,11 @@ public class ProductoServicio {
     @Autowired
     private ProductosRepo productosRepo;
 
-    public List<Producto> obtenerTodos() {
-        return productosRepo.findAll();
+    public Page<Producto> obtenerTodos(Pageable pageable) {
+        return productosRepo.findAll(pageable);
     }
+
+
 
     public Optional<Producto> obtenerPorId(Long id) {
         return productosRepo.findById(id);
@@ -50,9 +54,6 @@ public class ProductoServicio {
         productosRepo.deleteById(id);
     }
 
-
-
-
     public Producto cambiarEstadoActivo(Long id) {
         return productosRepo.findById(id)
                 .map(producto -> {
@@ -60,7 +61,6 @@ public class ProductoServicio {
                     return productosRepo.save(producto);
                 }).orElseThrow(() -> new RuntimeException("Producto no encontrado con el id " + id));
     }
-
 
     public Producto ajustarExistencias(Long id, int cantidad) {
         return productosRepo.findById(id)
