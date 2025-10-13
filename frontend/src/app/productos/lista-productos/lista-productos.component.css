@@ -96,3 +96,11 @@ tbody tr:hover {
   color: #555;
   font-style: italic;
 }
+
+.paginacion-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 1rem; 
+  margin-top: 1.5rem;
+}

@@ -5,6 +5,10 @@ import com.example.Backend_Devapps.services.ProductoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 import java.util.Map; // <-- ASEGÚRATE DE AGREGAR ESTA IMPORTACIÓN
@@ -19,8 +23,12 @@ public class ProductoControlador {
 
     // Endpoint para obtener los productos
     @GetMapping
-    public List<Producto> obtenerTodos() {
-        return productoServicio.obtenerTodos();
+    public Page<Producto> obtenerTodos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productoServicio.obtenerTodos(pageable);
     }
 
     // Endpoint para obtener id
